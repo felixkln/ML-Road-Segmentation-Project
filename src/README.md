@@ -33,7 +33,7 @@ python run.py --training
 
 ## File architecture
 * **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
-* **weights** : 
+* **weights** : CNN trained with F1-score of 83.3% on AICrowd test set
 * **data** : folder containing the training set and AICrowd test set
 * **utils** : folder containing helper functions
 * **cnn.py** : The CNN model and the functions implemented to train our CNN
@@ -48,7 +48,7 @@ python run.py --training
 
 ## Technical Details
 
-* Patch-based binary classification using CNN (each patch can be classified either as a `road' or as a `background')
+* Patch-based binary classification using CNN (each patch can be classified either as a 'road' or as a 'background')
 * Patches of size 16 x 16 of the original satellite image are classified and then reassembled to constitute the final prediction for the road segmentation
 * Use of Data Augmentation of satellite images (vertical and horizontal flips, random rotations (up to +-90°), brightness, contrast, saturation, hue)
 
