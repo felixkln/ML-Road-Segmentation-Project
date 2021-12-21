@@ -92,7 +92,8 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
             running_loss += loss.item()
 
             accuracies_valid.append(accuracy(prediction, batch_y))
-            f1_valid.append(f1_score(batch_y.detach(), np.argmax(prediction.detach(), 1)))
+            predicted_labels = np.argmax(prediction.detach().cpu(), 1)
+            f1_valid.append(f1_score(batch_y.detach().cpu(), predicted_labels))
 
         loss_valid.append(running_loss / len(dataset_valid))
 
@@ -129,7 +130,8 @@ def train_submissions (model, criterion, dataset_train, optimizer, num_epochs, d
             loss.backward()
             optimizer.step()
 
-            f1_train.append(f1_score(batch_y.detach(), np.argmax(prediction.detach(), 1)))
+            predicted_labels = np.argmax(prediction.detach().cpu(), 1)
+            f1_train.append(f1_score(batch_y.detach().cpu(), predicted_labels))
 
         loss_train.append(running_loss / len(dataset_train))
         f1_epoch = sum(f1_train) / len(f1_train)
