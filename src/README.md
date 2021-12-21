@@ -37,7 +37,7 @@ python run.py
 * **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
 * **data** : folder containing the training set and AICrowd test set
 * **utils** : folder containing the helper functions
-* ***.ipynb***
+* **\*.ipynb***
 
 ## Authors
 * Galann Pennec
