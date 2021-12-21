@@ -1,15 +1,17 @@
 # Road Segmentation 
 
-## Description  
+## Description
 
 ## Libraries
 
 The code require using the following libraries
-- PyTorch
-- Numpy 1.17.xx
-- Pillow 6.2.xx
-- Matplotlib 3.1.x
-- Python 3.7.x
+- PyTorch 1.10.x
+- Torchvision 0.11.x
+- Pillow 8.2.x
+- Numpy 1.20.xx
+- Matplotlib 3.3.x
+- scikit-learn 1.0.x
+- Python 3.8.x
 
 ## How to run the code ?
 
@@ -38,7 +40,7 @@ The training was done using Google Colab with the following configuration
 * **weights.h5** : weights of the CNN standard trained model with result F1 = 0.882 
 * **final_submission.csv** : csv file generated through unet.h5.
 * **helpers.py** : contains all the utilities functions used by the neural network.
-* **train_xx.py** : contains the training code for the models 
+* **train_xx.py** : contains the training code for the models
 
 ## Authors
 * Galann Pennec
