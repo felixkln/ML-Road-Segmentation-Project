@@ -1,32 +1,51 @@
-# Project Road Segmentation
+# Road Segmentation 
 
-For this choice of project task, we provide a set of satellite images acquired 
-from GoogleMaps. We also provide ground-truth images where each pixel is labeled 
-as road or background. 
+## Description
 
-Your task is to train a classifier to segment roads in these images, i.e. 
-assigns a label `road=1, background=0` to each pixel.
+## Libraries
 
-Submission system environment setup:
+The code require using the following libraries
+- PyTorch 1.10.x
+- Torchvision 0.11.x
+- Pillow 8.2.x
+- Numpy 1.20.xx
+- Matplotlib 3.3.x
+- scikit-learn 1.0.x
+- Python 3.8.x
 
-1. The dataset is available from the 
-[CrowdAI page](https://www.crowdai.org/challenges/epfl-ml-road-segmentation).
+## How to run the code ?
 
-2. Obtain the python notebook `segment_aerial_images.ipynb` from this github 
-folder, to see example code on how to extract the images as well as 
-corresponding labels of each pixel.
+First, clone the repository. Then, you can train the CNN model and generate the predictions on AICrowd dataset of satellite images using the following command line in a shell:
 
-The notebook shows how to use `scikit learn` to generate features from each 
-pixel, and finally train a linear classifier to predict whether each pixel is 
-road or background. Or you can use your own code as well. Our example code here 
-also provides helper functions to visualize the images, labels and predictions. 
-In particular, the two functions `mask_to_submission.py` and 
-`submission_to_mask.py` help you to convert from the submission format to a 
-visualization, and vice versa.
+```bash
+python run.py
+```
 
-3. As a more advanced approach, try `tf_aerial_images.py`, which demonstrates 
-the use of a basic convolutional neural network in TensorFlow for the same 
-prediction task.
 
-Evaluation Metric:
- [F1 score](https://en.wikipedia.org/wiki/F1_score)
+## Technical Details
+
+
+## Training Hardware
+
+- GPU: GeForce RTX 2060
+- CPU: intel core i7-9750H
+- RAM: 16 GB
+
+## File architecture
+* **submission.csv** : csv file containing the predictions produced with the CNN on AICrowd test set
+* **train_xx.py** : contains the training code for the models
+* **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
+* **data** : folder containing the training set and AICrowd test set
+* **utils** : folder containing the helper functions
+* **\*.ipynb***
+
+## Authors
+* Galann Pennec
+* Valérian Mangé
+* Félix Klein
+
+## References
+
+* How to build a simple CNN model in Pytorch: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+* Data Augmentation of images in PyTorch: https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py
+* Datasets and DataLoaders in PyTorch: https://towardsdatascience.com/beginners-guide-to-loading-image-data-with-pytorch-289c60b7afec
