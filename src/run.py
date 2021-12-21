@@ -21,8 +21,8 @@ from torchvision import models
 # local imports
 from utils.helpers import *
 from cnn import *
-from dataset import *
-from submissions import *
+from utils.augmented_dataset import *
+from utils.submissions import *
 
 root_dir = "data/training/"
 image_test = "data/test_set_images"
