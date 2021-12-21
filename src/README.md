@@ -15,29 +15,34 @@ The code require using the following libraries
 
 ## How to run the code ?
 
-First, clone the repository. Then, you can train the CNN model and generate the predictions on AICrowd dataset of satellite images using the following command line in a shell:
+First, clone the repository. Then, you can generate the predictions on AICrowd dataset of satellite images using the following command line in a shell:
 
 ```bash
 python run.py
 ```
 
+If you want to retrain the model from scratch before generating the predictions you can instead run the following command line:
 
-## Technical Details
+```bash
+python run.py -train
+```
 
+## File architecture
+* **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
+* **data** : folder containing the training set and AICrowd test set
+* **utils** : folder containing helper functions
+* **cnn.py** : The CNN model and the functions implemented to train our CNN
+* **\*.ipynb** : notebooks used to test different ML approaches for the road segmentation task
+* **submission.csv** : csv file containing the predictions produced with the CNN on AICrowd test set
 
-## Training Hardware
+## Hardware
 
 - GPU: GeForce RTX 2060
 - CPU: intel core i7-9750H
 - RAM: 16 GB
 
-## File architecture
-* **submission.csv** : csv file containing the predictions produced with the CNN on AICrowd test set
-* **train_xx.py** : contains the training code for the models
-* **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
-* **data** : folder containing the training set and AICrowd test set
-* **utils** : folder containing the helper functions
-* **\*.ipynb***
+## Technical Details
+
 
 ## Authors
 * Galann Pennec
@@ -46,6 +51,6 @@ python run.py
 
 ## References
 
-* How to build a simple CNN model in Pytorch: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
-* Data Augmentation of images in PyTorch: https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py
-* Datasets and DataLoaders in PyTorch: https://towardsdatascience.com/beginners-guide-to-loading-image-data-with-pytorch-289c60b7afec
+* How to build a simple CNN model in Pytorch : https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+* Data Augmentation of images in PyTorch : https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py
+* Datasets and DataLoaders in PyTorch : https://towardsdatascience.com/beginners-guide-to-loading-image-data-with-pytorch-289c60b7afec
