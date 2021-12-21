@@ -2,6 +2,10 @@
 
 ## Description
 
+This repository provides a CNN model for Road Segmentation of Google Maps satellite images. The models performs with a F1-score of 83.3% on the dataset from AICrowd website https://www.aicrowd.com/challenges/epfl-ml-road-segmentation.
+
+The dataset used for training and generating the weights (file **weights**) consists of 100 satellites images of size 400x400 each.
+
 ## Libraries
 
 The code require using the following libraries
@@ -24,11 +28,12 @@ python run.py
 If you want to retrain the model from scratch before generating the predictions you can instead run the following command line:
 
 ```bash
-python run.py -train
+python run.py --training
 ```
 
 ## File architecture
 * **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
+* **weights** : 
 * **data** : folder containing the training set and AICrowd test set
 * **utils** : folder containing helper functions
 * **cnn.py** : The CNN model and the functions implemented to train our CNN
@@ -43,6 +48,9 @@ python run.py -train
 
 ## Technical Details
 
+* Patch-based binary classification using CNN (each patch can be classified either as a `road' or as a `background')
+* Patches of size 16 x 16 of the original satellite image are classified and then reassembled to constitute the final prediction for the road segmentation
+* Use of Data Augmentation of satellite images (vertical and horizontal flips, random rotations (up to +-90°), brightness, contrast, saturation, hue)
 
 ## Authors
 * Galann Pennec
