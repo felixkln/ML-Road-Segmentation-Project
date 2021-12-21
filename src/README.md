@@ -15,13 +15,11 @@ The code require using the following libraries
 
 ## How to run the code ?
 
+First, clone the repository. Then, you can train the CNN model and generate the predictions on AICrowd dataset of satellite images using the following command line in a shell:
 
- ```bash 
-git clone <repo_url> // clone the repo
-cd src
-python run.py -unet //for Unet architecture (To be used for course evaluation)
-#python run.py -normal // for traditional architecutre
-  ```
+```bash
+python run.py
+```
 
 
 ## Technical Details
