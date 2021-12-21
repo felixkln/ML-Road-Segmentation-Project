@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository provides a CNN model for Road Segmentation of Google Maps satellite images. The models performs with a F1-score of 83.3% on the dataset from AICrowd website https://www.aicrowd.com/challenges/epfl-ml-road-segmentation.
+This repository provides a CNN model for Road Segmentation of Google Maps satellite images. The models performs with a F1-score of 83.3% and an accuracy of 90.3% on the dataset of satellite images from AICrowd website https://www.aicrowd.com/challenges/epfl-ml-road-segmentation.
 
 The dataset used for training and generating the weights (file **weights**) consists of 100 satellites images of size 400x400 each.
 
