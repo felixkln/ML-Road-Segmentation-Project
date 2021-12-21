@@ -47,6 +47,6 @@ The training was done using Google Colab with the following configuration
 
 ## References
 
-* How to build a CNN model in pytorch: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+* How to build a simple CNN model in Pytorch: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
 * Data Augmentation of images in PyTorch: https://pytorch.org/vision/stable/auto_examples/plot_transforms.html#sphx-glr-auto-examples-plot-transforms-py
-* DataLoaders in PyTorch: https://towardsdatascience.com/beginners-guide-to-loading-image-data-with-pytorch-289c60b7afec
+* Datasets and DataLoaders in PyTorch: https://towardsdatascience.com/beginners-guide-to-loading-image-data-with-pytorch-289c60b7afec
