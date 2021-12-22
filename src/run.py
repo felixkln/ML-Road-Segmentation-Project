@@ -67,7 +67,7 @@ def trainCNN(img_patches, Y, mean_img, std_img):
 
     # TRAINING THE CNN
     # hyperparameters
-    num_epochs = 100
+    num_epochs = 150
     learning_rate = 1e-3
 
     # Criterion to optimize
