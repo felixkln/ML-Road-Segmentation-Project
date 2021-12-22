@@ -39,7 +39,7 @@ window_size = 64
 padding = (window_size - patch_size) // 2
 
 
-def trainCNN():
+def trainCNN(img_patches, Y, mean_img, std_img):
     """Performs the train_submissions function from the cnn.py
     file, by setting fixed parameters beforehand
 
@@ -113,7 +113,7 @@ def run(training):
     # TRAINING THE CNN IF NECESSARY
     if training:
         # Train the CNN model from scratch
-        model_lenet = trainCNN()
+        model_lenet = trainCNN(img_patches, Y, mean_img, std_img)
     else:
         # Load the preexisting model
         model_lenet = LeNetModel()
