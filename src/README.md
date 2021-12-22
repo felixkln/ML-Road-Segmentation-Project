@@ -46,7 +46,7 @@ python run.py --training
 - CPU: intel core i7-9750H
 - RAM: 16 GB
 
-## Technical Details
+## Implementation Details
 
 * Patch-based binary classification using CNN (each patch can be classified either as a 'road' or as a 'background')
 * Patches of size 16 x 16 of the original satellite image are classified and then reassembled to constitute the final prediction for the road segmentation
