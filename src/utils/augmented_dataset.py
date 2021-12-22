@@ -8,7 +8,7 @@ import torchvision.transforms as T
 
 # Transformation of the original images (Data Augmentation)
 augmentation = T.Compose([
-    lambda x : np.around(x * 255).astype("uint8"),
+    lambda x: np.around(x * 255).astype("uint8"),
     T.ToPILImage(),
     T.RandomVerticalFlip(0.5),
     T.RandomHorizontalFlip(0.5),
@@ -21,7 +21,25 @@ augmentation = T.Compose([
 
 class TrainsetCNN(Dataset):
     """Class describing the training dataset used by the CNN"""
+
     def __init__(self, x, y, mean_img, std_img, augmentation=None):
+        """Initializing the attributes of the class
+
+        Parameters
+        ----------
+        x : nd.array
+          Inputs
+        y : nd.array
+          Labels
+        length : int
+          Numbers of rows of x
+        augmentation : torchvision.transforms.Compose
+          Set of the transforms applied to the dataset for increased accuracy
+
+        Returns
+        -------
+        nothing
+        """
         self.x = x
         self.y = torch.tensor(y).long()
         # Number of image patches in the dataset
@@ -32,7 +50,8 @@ class TrainsetCNN(Dataset):
         if augmentation:
             self.augmentation = T.Compose([augmentation, normalization])
         else:
-            self.augmentation = T.Compose([T.ToTensor(), normalization]) # No Data Augmentation
+            self.augmentation = T.Compose(
+                [T.ToTensor(), normalization])  # No Data Augmentation
 
     def __getitem__(self, idx):
         return self.augmentation(self.x[idx]), self.y[idx]
@@ -40,29 +59,45 @@ class TrainsetCNN(Dataset):
     def __len__(self):
         return self.length
 
+
 class TestsetCNN(Dataset):
     """Class describing the test dataset"""
-    def __init__(self, x, mean_train, std_train):        
+
+    def __init__(self, x, mean_train, std_train):
         self.x = x
-        self.transformation = T.Compose([T.ToTensor(), T.Normalize(mean_train, std_train)])
+        self.transformation = T.Compose(
+            [T.ToTensor(), T.Normalize(mean_train, std_train)])
         self.length = len(self.x)
 
     def __getitem__(self, idx):
         return self.transformation(self.x[idx])
-        
+
     def __len__(self):
         return self.length
 
 
-def balanced_sampler (labels):
-    """the training set is imbalanced (too few roads)"""
+def balanced_sampler(labels):
+    """Balances the dataset to improve the model
+
+    Parameters
+    ----------
+    labels : nd.array
+      outputs of the training set
+
+    Returns
+    -------
+    sampler : nd.array
+      balanced dataset"""
     # defining weights for the classes
-    class_weights = compute_class_weight(class_weight = 'balanced', classes = np.unique(labels), y = labels)
+    class_weights = compute_class_weight(
+        class_weight='balanced', classes=np.unique(labels), y=labels)
     print("Dealing with imbalanced datasets")
-    print("Background weight: {:.3f}\nRoad weight: {:.3f}".format(class_weights[0], class_weights[1]))
+    print("Background weight: {:.3f}\nRoad weight: {:.3f}".format(
+        class_weights[0], class_weights[1]))
 
     # Picking a road or a background patch with the same probability (=> balanced training set)
     weights = class_weights[labels]
     weights = torch.tensor(weights, dtype=torch.float32)
-    sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+    sampler = torch.utils.data.sampler.WeightedRandomSampler(
+        weights, len(weights))
     return sampler

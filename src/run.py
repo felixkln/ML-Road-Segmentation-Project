@@ -45,7 +45,13 @@ def trainCNN(img_patches, Y, mean_img, std_img):
 
     Parameters
     ----------
-    None
+    img_patches : nd.array
+      Input images divided into 16x16 patches
+    Y : nd.array
+      Labels
+    mean_img, std_img : 3-tuples
+      Mean and standard deviation for all patches
+      on each of the color channels
 
     Returns
     -------
