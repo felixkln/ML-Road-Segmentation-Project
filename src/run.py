@@ -141,7 +141,7 @@ def run(training):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--training")
+    parser.add_argument("--training", dest="training", action="store_true")
     results = parser.parse_args()
     training = results.training is not None
     run(training)
