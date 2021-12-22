@@ -111,7 +111,7 @@ def run(training):
     std_img = np.std(img_patches, axis=(0, 1, 2))
 
     # TRAINING THE CNN IF NECESSARY
-    if train:
+    if training:
         # Train the CNN model from scratch
         model_lenet = trainCNN()
     else:
