@@ -129,7 +129,7 @@ def run(training):
 
     # MAKING THE SUBMISSIONS
     model_lenet.eval()
-    print("\nGenerating 'submission.csv...'")
+    print("\nGenerating 'submission.csv'...")
     test_files = list(glob.iglob(image_test + '/*/*.png', recursive=True))
     masks_to_submission(model_lenet.cpu(), "submission.csv",
                         test_files, patch_size, padding, mean_img, std_img)
