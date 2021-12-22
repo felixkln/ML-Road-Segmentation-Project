@@ -243,7 +243,7 @@ def plot_performance(loss_train, loss_valid):
     y axis : training and validation losses
 
     """
-    epochs = range(1, num_epochs + 1)
+    epochs = range(1, len(loss_train) + 1)
     plt.plot(epochs, loss_train)
     plt.plot(epochs, loss_valid)
     plt.legend(["train loss", "validation loss"])
