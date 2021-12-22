@@ -15,6 +15,22 @@ class LeNetModel(nn.Module):
     """CNN For the Road Segmentation Task"""
 
     def __init__(self):
+        """Initializes the layers of the convolutional network
+
+        Parameters
+        ----------
+        conv1, conv2, conv3 : torch.nn.Conv2d
+          Convolutional layers from torch.nn
+        batch_norm1, batch_norm2, batch_norm3 : torch.nn.BatchNorm2d
+          Batch normalizing layers from torch.nn
+        fc1, fc2, fc3 : torch.nn.Linear
+          Fully connected layers from torch.nn
+          Put at the end of the network before the softmax classifier
+
+        Returns
+        -------
+        nothing
+        """
         super().__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=5)
         self.batch_norm1 = nn.BatchNorm2d(64)
@@ -27,8 +43,31 @@ class LeNetModel(nn.Module):
         self.fc2 = nn.Linear(256, 64)
         self.fc3 = nn.Linear(64, 2)
 
-
     def forward(self, x):
+        """Performs an operation on input x by feeding it into
+        the model to obtain an output to make a decision
+
+        Initializes the layers of the convolutional network
+
+        Parameters
+        ----------
+        x : nd.array
+          Input value to be fed into the network
+        conv1, conv2, conv3 : nn.Conv2d
+          Convolutional layers from torch.nn
+        batch_norm1, batch_norm2, batch_norm3 : nn.BatchNorm2d
+          Batch normalizing layers from torch.nn
+        fc1, fc2, fc3 : nn.Linear
+          Fully connected layers from torch.nn
+          Put at the end of the network before the softmax classifier
+
+        Returns
+        -------
+        x : nd.array
+          The new value of x after having been through
+          the layers, activation functions & softmax operator
+
+        """
         # Convolutional Layers
         x = self.batch_norm1(leaky_relu(max_pool2d(self.conv1(x), 2)))
         x = self.batch_norm2(leaky_relu(max_pool2d(self.conv2(x), 2)))
@@ -47,13 +86,32 @@ class LeNetModel(nn.Module):
 
 
 def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, num_epochs, device):
-    """
-    @param model: torch.nn.Module
-    @param criterion: torch.nn.modules.loss._Loss
-    @param dataset_train: torch.utils.data.DataLoader
-    @param dataset_valid: torch.utils.data.DataLoader
-    @param optimizer: torch.optim.Optimizer
-    @param num_epochs: int
+    """Performs the optimization of the training and validation losses
+    using the cross-validation principle
+
+    Parameters
+    ----------
+
+    model : torch.nn.Module
+      Model used for the prediction (a CNN for instance)
+    criterion : torch.nn.modules.loss._Loss
+      Type of loss used as metric
+    dataset_train : torch.utils.data.DataLoader
+      Loaded training dataset
+    dataset_valid : torch.utils.data.DataLoader
+      Loaded validation dataset, generated from the original training set
+    optimizer : torch.optim.Optimizer
+      Type of method used to minimize the losses (GD, SGD, ADAM, ISTA, FISTA, ADAGRAD, etc.)
+    num_epochs : int
+      Number of iterations over the total dataset
+    device : torch.cuda
+      If available, this function uses the GPU of your computer to accelerate the running time
+
+    Returns
+    -------
+
+    loss_train, loss_valid: float
+      training and validation losses
     """
     print("Starting training")
 
@@ -78,7 +136,6 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
 
         loss_train.append(running_loss / len(dataset_train))
 
-
         # Test the quality on the validation set
         model.eval()
         accuracies_valid = []
@@ -101,18 +158,43 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
         accuracy_epoch = sum(accuracies_valid) / len(accuracies_valid)
         f1_epoch = sum(f1_valid) / len(f1_valid)
         print("Epoch {}".format(epoch + 1))
-        print("val accuracy: {:.5f}, f1-score: {:.5f}\n".format(accuracy_epoch, f1_epoch))
-        
+        print(
+            "val accuracy: {:.5f}, f1-score: {:.5f}\n".format(accuracy_epoch, f1_epoch))
+
         scheduler.step(f1_epoch)
 
     print("Finished")
     return loss_train, loss_valid
 
 
-def train_submissions (model, criterion, dataset_train, optimizer, num_epochs, device):
+def train_submissions(model, criterion, dataset_train, optimizer, num_epochs, device):
+    """Performs the optimization of the training loss
+    so as to generate the .csv file for submission afterwards
+
+    Parameters
+    ----------
+
+    model : torch.nn.Module
+      Model used for the prediction (a CNN for instance)
+    criterion : torch.nn.modules.loss._Loss
+      Type of loss used as metric
+    dataset_train : torch.utils.data.DataLoader
+      Loaded training dataset
+    optimizer : torch.optim.Optimizer
+      Type of method used to minimize the losses (GD, SGD, ADAM, ISTA, FISTA, ADAGRAD, etc.)
+    num_epochs : int
+      Number of iterations over the total dataset
+    device : torch.cuda
+      If available, this function uses the GPU of your computer to accelerate the running time
+
+    Returns
+    -------
+    nothing
+
+    """
     print("Starting training")
     model.train()
-    
+
     loss_train = []
     for epoch in range(num_epochs):
         # Train an epoch
@@ -144,9 +226,24 @@ def train_submissions (model, criterion, dataset_train, optimizer, num_epochs, d
     return
 
 
-def plot_performance (loss_train, loss_valid):
-    """plotting the loss curves for the train and the validation sets"""
-    epochs = range(1, num_epochs + 1)
+def plot_performance(loss_train, loss_valid):
+    """plotting the loss curves for the train and the validation sets
+
+    Parameters
+    ----------
+
+    loss_train, loss_valid : float
+      loss of the training and validation datasets generated by the train function
+
+    Returns
+    -------
+
+    A 2D plot
+    x axis : number of epochs
+    y axis : training and validation losses
+
+    """
+    epochs = range(1, len(loss_train) + 1)
     plt.plot(epochs, loss_train)
     plt.plot(epochs, loss_valid)
     plt.legend(["train loss", "validation loss"])
@@ -157,9 +254,20 @@ def plot_performance (loss_train, loss_valid):
 
 
 def predict(model, dataset_test):
-    """
-    @param model: torch.nn.Module
-    @param dataset_test: torch.utils.data.DataLoader
+    """From the test set, this function calculates (predicts)
+    the output (labels)
+
+    Parameters
+    ----------
+    model : torch.nn.Module
+      Model used for the prediction (a CNN for instance)
+    dataset_test : torch.utils.data.DataLoader
+      The test set used to calculate its labels
+
+    Returns
+    -------
+    predicted_labels : nd.array
+      Output of the model, and prediction
     """
     # Running the prediction for the test set
     model.eval()
