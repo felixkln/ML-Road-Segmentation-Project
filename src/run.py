@@ -112,6 +112,7 @@ def run(training):
     print("Loading " + str(n) + " groundtruths...")
     gt_imgs = [load_image(gt_dir + files[i]) for i in range(n)]
     # Extract patches and labels
+    print("\nExtracting patches and labels...")
     img_patches, Y = extract_patches_labels(
         imgs, gt_imgs, patch_size, padding, n)
     # Mean and std of our dataset of image patches
@@ -121,9 +122,11 @@ def run(training):
     # TRAINING THE CNN IF NECESSARY
     if training:
         # Train the CNN model from scratch
+        print("\nTraining the CNN Model from scratch...")
         model_lenet = trainCNN(img_patches, Y, mean_img, std_img)
     else:
         # Load the preexisting model
+        print("\nLoading the pretrained CNN Model...")
         model_lenet = LeNetModel()
         model_lenet.load_state_dict(torch.load(path_weights))
 
