@@ -167,65 +167,6 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
     return loss_train, loss_valid
 
 
-def train_submissions(model, criterion, dataset_train, optimizer, num_epochs, device):
-    """Performs the optimization of the training loss
-    so as to generate the .csv file for submission afterwards
-
-    Parameters
-    ----------
-
-    model : torch.nn.Module
-      Model used for the prediction (a CNN for instance)
-    criterion : torch.nn.modules.loss._Loss
-      Type of loss used as metric
-    dataset_train : torch.utils.data.DataLoader
-      Loaded training dataset
-    optimizer : torch.optim.Optimizer
-      Type of method used to minimize the losses (GD, SGD, ADAM, ISTA, FISTA, ADAGRAD, etc.)
-    num_epochs : int
-      Number of iterations over the total dataset
-    device : torch.cuda
-      If available, this function uses the GPU of your computer to accelerate the running time
-
-    Returns
-    -------
-    nothing
-
-    """
-    print("Starting training")
-    model.train()
-
-    loss_train = []
-    for epoch in range(num_epochs):
-        # Train an epoch
-        running_loss = 0.
-        f1_train = []
-        for batch_x, batch_y in tqdm(dataset_train):
-            batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-
-            # Evaluate the network (forward pass)
-            prediction = model(batch_x)
-            loss = criterion(prediction, batch_y)
-            running_loss += loss.item()
-
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-            predicted_labels = np.argmax(prediction.detach().cpu(), 1)
-            f1_train.append(f1_score(batch_y.detach().cpu(), predicted_labels))
-
-        loss_train.append(running_loss / len(dataset_train))
-        f1_epoch = sum(f1_train) / len(f1_train)
-
-        # Printing statistics
-        print("Epoch {}".format(epoch + 1))
-        print("train f1-score: {:.5f}\n".format(f1_epoch))
-
-    print("Finished")
-    return
-
-
 def plot_performance(loss_train, loss_valid):
     """plotting the loss curves for the train and the validation sets
 
