@@ -107,9 +107,9 @@ def run(training):
     # Loading set of images
     files = os.listdir(image_dir)
     n = len(files)
-    print("Loading " + str(n) + " images")
+    print("Loading " + str(n) + " images...")
     imgs = [load_image(image_dir + files[i]) for i in range(n)]
-    print("Loading " + str(n) + " groundtruths")
+    print("Loading " + str(n) + " groundtruths...")
     gt_imgs = [load_image(gt_dir + files[i]) for i in range(n)]
     # Extract patches and labels
     img_patches, Y = extract_patches_labels(
@@ -129,9 +129,11 @@ def run(training):
 
     # MAKING THE SUBMISSIONS
     model_lenet.eval()
+    print("\nGenerating 'submission.csv...'")
     test_files = list(glob.iglob(image_test + '/*/*.png', recursive=True))
     masks_to_submission(model_lenet.cpu(), "submission.csv",
                         test_files, patch_size, padding, mean_img, std_img)
+    print("\nFinished!")
 
 
 if __name__ == "__main__":
