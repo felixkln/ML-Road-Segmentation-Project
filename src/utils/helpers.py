@@ -228,6 +228,11 @@ def make_img_overlay(img, predicted_img):
     predicted_img : nd.array
       Matrix of the size of the image telling which spots are
       roads and which are not
+
+    Returns
+    -------
+    new_img : nd.array
+      Image with prediction overlay (color)
     """
     w = img.shape[0]
     h = img.shape[1]
