@@ -32,11 +32,13 @@ root_dir = "data/training/"
 image_test = "data/test_set_images"
 image_dir = root_dir + "images/"
 gt_dir = root_dir + "groundtruth/"
-path_weights = "saved_weights_cnn"
+path_weights = "weights"
 
 patch_size = 16
 window_size = 64
 padding = (window_size - patch_size) // 2
+
+np.random.seed(42)
 
 
 def trainCNN(img_patches, Y, mean_img, std_img):
