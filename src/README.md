@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository provides a CNN model for Road Segmentation of Google Maps satellite images. The models performs with a F1-score of 83.3% and an accuracy of 90.3% on the dataset of satellite images from AICrowd website https://www.aicrowd.com/challenges/epfl-ml-road-segmentation.
+This repository provides a CNN model for Road Segmentation of Google Maps satellite images. The models performs with a F1-score of 83.2% and an accuracy of 90.5% on the dataset of satellite images from AICrowd website https://www.aicrowd.com/challenges/epfl-ml-road-segmentation.
 
 The dataset used for training and generating the weights (file **weights**) consists of 100 satellites images of size 400x400 each along with their groundtruths.
 
@@ -33,7 +33,7 @@ python run.py --training
 
 ## File architecture
 * **run.py** : the code to train our CNN model and get a csv file with the predictions on AICrowd test set
-* **weights** : CNN trained with F1-score of 83.3% on AICrowd test set
+* **weights** : CNN trained with F1-score of 83.2% on AICrowd test set
 * **data** : folder containing the training set and AICrowd test set
 * **utils** : folder containing helper functions
 * **cnn.py** : The CNN model and the functions implemented to train our CNN
