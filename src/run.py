@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import os, sys, glob, re, argparse
+import os
+import sys
+import glob
+import re
+import argparse
 from tqdm import tqdm
 
 from sklearn.model_selection import train_test_split
@@ -35,16 +39,27 @@ window_size = 64
 padding = (window_size - patch_size) // 2
 
 
-
 def trainCNN():
+    """Performs the train_submissions function from the cnn.py
+    file, by setting fixed parameters beforehand
 
-    #### DEVICE USED
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    model_lenet : LeNetModel
+      Model class from cnn.py, which is a subclass of torch.nn.Module
+    """
+
+    # DEVICE USED
     if torch.cuda.is_available():
         device = "cuda"
     else:
         device = "cpu"
 
-    #### TRAINING THE CNN
+    # TRAINING THE CNN
     # hyperparameters
     num_epochs = 100
     learning_rate = 1e-3
@@ -55,21 +70,32 @@ def trainCNN():
     # Building the augmented training set
     batch_size = 200
     sampler = balanced_sampler(Y)
-    trainsetAugmented = TrainsetCNN(img_patches, Y, mean_img, std_img, augmentation)
-    dataset_train = DataLoader(trainsetAugmented, batch_size=batch_size, sampler=sampler)
+    trainsetAugmented = TrainsetCNN(
+        img_patches, Y, mean_img, std_img, augmentation)
+    dataset_train = DataLoader(
+        trainsetAugmented, batch_size=batch_size, sampler=sampler)
 
     # Training
     model_lenet = LeNetModel().to(device)
     optimizer = torch.optim.Adam(model_lenet.parameters(), lr=learning_rate)
-    train_submissions(model_lenet, criterion, dataset_train, optimizer, num_epochs, device)
+    train_submissions(model_lenet, criterion, dataset_train,
+                      optimizer, num_epochs, device)
 
     return model_lenet
 
 
-
 def run(training):
+    """Main function for the whole project
 
-    #### LOADING PATCHES AND LABELS
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    nothing
+    """
+    # LOADING PATCHES AND LABELS
     # Loading set of images
     files = os.listdir(image_dir)
     n = len(files)
@@ -78,12 +104,13 @@ def run(training):
     print("Loading " + str(n) + " groundtruths")
     gt_imgs = [load_image(gt_dir + files[i]) for i in range(n)]
     # Extract patches and labels
-    img_patches, Y = extract_patches_labels(imgs, gt_imgs, patch_size, padding, n)
+    img_patches, Y = extract_patches_labels(
+        imgs, gt_imgs, patch_size, padding, n)
     # Mean and std of our dataset of image patches
     mean_img = np.mean(img_patches, axis=(0, 1, 2))
     std_img = np.std(img_patches, axis=(0, 1, 2))
 
-    #### TRAINING THE CNN IF NECESSARY
+    # TRAINING THE CNN IF NECESSARY
     if train:
         # Train the CNN model from scratch
         model_lenet = trainCNN()
@@ -92,11 +119,11 @@ def run(training):
         model_lenet = LeNetModel()
         model_lenet.load_state_dict(torch.load(path_weights))
 
-    #### MAKING THE SUBMISSIONS
+    # MAKING THE SUBMISSIONS
     model_lenet.eval()
     test_files = list(glob.iglob(image_test + '/*/*.png', recursive=True))
-    masks_to_submission(model_lenet.cpu(), "submission.csv", test_files, patch_size, padding, mean_img, std_img)
-
+    masks_to_submission(model_lenet.cpu(), "submission.csv",
+                        test_files, patch_size, padding, mean_img, std_img)
 
 
 if __name__ == "__main__":
