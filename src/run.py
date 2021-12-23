@@ -53,7 +53,7 @@ def trainCNN(img_patches, Y, mean_img, std_img):
       Input images divided into 16x16 patches
     Y : nd.array
       Labels
-    mean_img, std_img : 3-tuples
+    mean_img, std_img : nd.array
       Mean and standard deviation for all patches
       on each of the color channels
 
@@ -96,14 +96,15 @@ def trainCNN(img_patches, Y, mean_img, std_img):
 
 def run(training):
     """Main function for the whole project
+    Loads the training data, optionally retrain the CNN model
+    and generate the predictions for AICrowd submission ('submission.csv')
 
     Parameters
     ----------
-    None
+    training : bool
+        is True if we choose to retrain the CNN model from scratch before the submissions.
+        Otherwise our pretrained model generate the submissions with a f1-score of 83.2%
 
-    Returns
-    -------
-    nothing
     """
     # LOADING PATCHES AND LABELS
     # Loading set of images
