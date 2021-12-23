@@ -8,6 +8,7 @@ from torch.nn.functional import *
 
 from tqdm import tqdm
 
+# Local import
 from utils.helpers import accuracy
 
 
@@ -29,7 +30,8 @@ class LeNetModel(nn.Module):
 
         Returns
         -------
-        nothing
+        Initialized LeNetModel object
+
         """
         super().__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=5)
@@ -44,28 +46,19 @@ class LeNetModel(nn.Module):
         self.fc3 = nn.Linear(64, 2)
 
     def forward(self, x):
-        """Performs an operation on input x by feeding it into
-        the model to obtain an output to make a decision
-
-        Initializes the layers of the convolutional network
+        """Performs a prediction on input x by feeding it into
+        the model to obtain the output
 
         Parameters
         ----------
-        x : nd.array
-          Input value to be fed into the network
-        conv1, conv2, conv3 : nn.Conv2d
-          Convolutional layers from torch.nn
-        batch_norm1, batch_norm2, batch_norm3 : nn.BatchNorm2d
-          Batch normalizing layers from torch.nn
-        fc1, fc2, fc3 : nn.Linear
-          Fully connected layers from torch.nn
-          Put at the end of the network before the softmax classifier
+        x : torch.Tensor
+          Input data to be fed into the network
 
         Returns
         -------
-        x : nd.array
-          The new value of x after having been through
-          the layers, activation functions & softmax operator
+        x : torch.Tensor
+          The prediction estimated from input data,
+          returned as a distribution over the two classes ('road' and 'background').
 
         """
         # Convolutional Layers
@@ -86,8 +79,8 @@ class LeNetModel(nn.Module):
 
 
 def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, num_epochs, device):
-    """Performs the optimization of the training and validation losses
-    using the cross-validation principle
+    """Performs the training and the validation over several epochs.
+    Print the validation accuracy and f1-score of each epoch trained.
 
     Parameters
     ----------
@@ -95,13 +88,13 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
     model : torch.nn.Module
       Model used for the prediction (a CNN for instance)
     criterion : torch.nn.modules.loss._Loss
-      Type of loss used as metric
+      Type of loss to optimize (CrossEntropyLoss for instance)
     dataset_train : torch.utils.data.DataLoader
       Loaded training dataset
     dataset_valid : torch.utils.data.DataLoader
       Loaded validation dataset, generated from the original training set
     optimizer : torch.optim.Optimizer
-      Type of method used to minimize the losses (GD, SGD, ADAM, ISTA, FISTA, ADAGRAD, etc.)
+      Type of method used to minimize the loss (GD, SGD, ADAM, ISTA, FISTA, ADAGRAD, etc.)
     num_epochs : int
       Number of iterations over the total dataset
     device : torch.cuda
@@ -121,7 +114,7 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
     for epoch in range(num_epochs):
         # Train an epoch
         model.train()
-        running_loss = 0.
+        running_loss = 0. # training loss accumulated for one epoch
         for batch_x, batch_y in tqdm(dataset_train):
             batch_x, batch_y = batch_x.to(device), batch_y.to(device)
 
@@ -130,10 +123,12 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
             loss = criterion(prediction, batch_y)
             running_loss += loss.item()
 
+            # Backpropagation
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
+        # add the averaged training loss for this epoch
         loss_train.append(running_loss / len(dataset_train))
 
         # Test the quality on the validation set
@@ -144,17 +139,20 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
         for batch_x, batch_y in dataset_valid:
             batch_x, batch_y = batch_x.to(device), batch_y.to(device)
 
+            # Compute the loss for the current validation example
             prediction = model(batch_x)
             loss = criterion(prediction, batch_y)
             running_loss += loss.item()
 
+            # Add the accuracy and the f1-score for the current validation example
             accuracies_valid.append(accuracy(prediction, batch_y))
             predicted_labels = np.argmax(prediction.detach().cpu(), 1)
             f1_valid.append(f1_score(batch_y.detach().cpu(), predicted_labels))
 
+        # add the averaged validation loss for this epoch
         loss_valid.append(running_loss / len(dataset_valid))
 
-        # Printing statistics
+        # Printing statistics for this epoch
         accuracy_epoch = sum(accuracies_valid) / len(accuracies_valid)
         f1_epoch = sum(f1_valid) / len(f1_valid)
         print("Epoch {}".format(epoch + 1))
@@ -169,19 +167,14 @@ def train(model, criterion, dataset_train, dataset_valid, optimizer, scheduler, 
 
 def plot_performance(loss_train, loss_valid):
     """plotting the loss curves for the train and the validation sets
+    x axis : epoch
+    y axis : training and validation loss curves
 
     Parameters
     ----------
 
     loss_train, loss_valid : float
       loss of the training and validation datasets generated by the train function
-
-    Returns
-    -------
-
-    A 2D plot
-    x axis : number of epochs
-    y axis : training and validation losses
 
     """
     epochs = range(1, len(loss_train) + 1)
@@ -195,7 +188,7 @@ def plot_performance(loss_train, loss_valid):
 
 
 def predict(model, dataset_test):
-    """From the test set, this function calculates (predicts)
+    """From the test set, this function computes (predicts)
     the output (labels)
 
     Parameters
@@ -203,7 +196,7 @@ def predict(model, dataset_test):
     model : torch.nn.Module
       Model used for the prediction (a CNN for instance)
     dataset_test : torch.utils.data.DataLoader
-      The test set used to calculate its labels
+      The test set used to compute its labels
 
     Returns
     -------
@@ -215,5 +208,6 @@ def predict(model, dataset_test):
     predicted_labels = []
     for batch_x in tqdm(dataset_test):
         predicted_logits = model(batch_x).detach().numpy()
+        # Labels are predicted by taking the maximum of the probability distribution over the two classes
         predicted_labels.append(np.argmax(predicted_logits, 1))
     return np.concatenate(predicted_labels)
