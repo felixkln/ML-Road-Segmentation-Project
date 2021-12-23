@@ -28,14 +28,16 @@ from cnn import *
 from utils.augmented_dataset import *
 from utils.submissions import *
 
+# path to training and test datasets
 root_dir = "data/training/"
 image_test = "data/test_set_images"
 image_dir = root_dir + "images/"
 gt_dir = root_dir + "groundtruth/"
+# saved weights with a F1-score of 83.2% on test set
 path_weights = "weights"
 
 patch_size = 16
-window_size = 64
+window_size = 64 # size of the frame surrounding the patch
 padding = (window_size - patch_size) // 2
 
 np.random.seed(42)
