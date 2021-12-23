@@ -10,29 +10,29 @@ def load_image(infilename):
     Parameters
     ----------
     infilename : string
-      Name and location of the file to be loaded
+      path to the image
 
     Returns
     -------
     data : nd.array
-      Image to be manipulated earlier
+      Image stored as a numpy array
     """
     data = mpimg.imread(infilename)
     return data
 
 
 def img_float_to_uint8(img):
-    """Converts an array of floats to an array of values between 0 and 255
+    """Converts an image of floats between 0 and 1 to an image of integers between 0 and 255
 
     Parameters
     ----------
     img : nd.array
-      Input image, values are floats
+      Input image, values are floats in [0, 1]
 
     Returns
     -------
     rimg : nd.array
-      Image with values between 0 and 255"""
+      Image with integer values between 0 and 255"""
     rimg = img - np.min(img)
     rimg = (rimg / np.max(rimg) * 255).round().astype(np.uint8)
     return rimg
@@ -48,7 +48,7 @@ def concatenate_images(img, gt_img):
     gt_img : nd.array
       Binarized (groundtruth) version of img, for which
       a white pixel represents a road
-      and a black pixel is everything else
+      and a black pixel is a background
 
     Returns
     -------
@@ -86,12 +86,15 @@ def img_crop(im, patch_size, padding):
     list_patches = []
     imgwidth = im.shape[0]
     imgheight = im.shape[1]
+    # What follows depend on if the image is 2d or 3d
     is_2d = len(im.shape) < 3
+    # Add padding to the image for extracting a frame surrounding each patch
     if is_2d:
         padding_channel = ((padding, padding), (padding, padding))
     else:
         padding_channel = ((padding, padding), (padding, padding), (0, 0))
     im = np.lib.pad(im, padding_channel, 'reflect')
+    # Cropping the image
     for i in range(padding, imgheight + padding, patch_size):
         for j in range(padding, imgwidth + padding, patch_size):
             if is_2d:
@@ -110,10 +113,10 @@ def accuracy(predicted_logits, reference):
 
     Parameters
     ----------
-    predicted_logits: float32
-      Tensor of shape (batch size, num classes)
-    reference: int64
-      Tensor of shape (batch_size) with the class number
+    predicted_logits: torch.Tensor
+      Tensor with all predicted values from the CNN
+    reference: nd.array
+      True labels for each patch
     """
     labels = torch.argmax(predicted_logits, 1)
     correct_predictions = labels.eq(reference)
@@ -144,7 +147,7 @@ def value_to_class(v, foreground_threshold):
 
 
 def extract_patches_labels(imgs, gt_imgs, patch_size, padding, n_extract):
-    """Stores patches into numpy arrays and thresholds the groundtruth patches
+    """Generates the patches and their corresponding labels from a list of images
 
     Parameters
     ----------
@@ -166,6 +169,7 @@ def extract_patches_labels(imgs, gt_imgs, patch_size, padding, n_extract):
     Y : nd.array
       Thresholded labels for each patch
       """
+    # Cropping all the input images and their associated groundtruths
     img_patches = [img_crop(imgs[i], patch_size, padding)
                    for i in range(n_extract)]
     gt_patches = [img_crop(gt_imgs[i], patch_size, 0)
