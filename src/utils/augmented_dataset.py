@@ -8,7 +8,7 @@ import torchvision.transforms as T
 
 # Transformation of the original images (Data Augmentation)
 augmentation = T.Compose([
-    lambda x: np.around(x * 255).astype("uint8"),
+    lambda x: np.around(x * 255).astype("uint8"), # converts pixels from [0, 1] to [0, 255]
     T.ToPILImage(),
     T.RandomVerticalFlip(0.5),
     T.RandomHorizontalFlip(0.5),
@@ -28,17 +28,17 @@ class TrainsetCNN(Dataset):
         Parameters
         ----------
         x : nd.array
-          Inputs
+          Input patches
         y : nd.array
-          Labels
+          True labels for each patch
         length : int
-          Numbers of rows of x
+          Numbers of patches in x
         augmentation : torchvision.transforms.Compose
-          Set of the transforms applied to the dataset for increased accuracy
+          Set of augmentations applied to each patch of the dataset
 
         Returns
         -------
-        nothing
+        Initialized TrainsetCNN dataset
         """
         self.x = x
         self.y = torch.tensor(y).long()
@@ -61,12 +61,27 @@ class TrainsetCNN(Dataset):
 
 
 class TestsetCNN(Dataset):
-    """Class describing the test dataset"""
+    """Class describing the test dataset on which we make predictions"""
 
     def __init__(self, x, mean_train, std_train):
+        """Initializing the attributes of the class
+
+        Parameters
+        ----------
+        x : nd.array
+          Test patches
+        transformation : torchvision.transforms.Compose
+          Normalizing each patch of the test set according to the train dataset
+        length : int
+          Numbers of test patches in x
+
+        Returns
+        -------
+        Initialized TestsetCNN dataset
+        """
         self.x = x
         self.transformation = T.Compose(
-            [T.ToTensor(), T.Normalize(mean_train, std_train)])
+            [T.ToTensor(), T.Normalize(mean_train, std_train)]) # Normalization
         self.length = len(self.x)
 
     def __getitem__(self, idx):
@@ -77,18 +92,20 @@ class TestsetCNN(Dataset):
 
 
 def balanced_sampler(labels):
-    """Balances the dataset to improve the model
+    """Returns a PyTorch sampler for oversampling roads and balancing the dataset
 
     Parameters
     ----------
     labels : nd.array
-      outputs of the training set
+      True labels for each patch of the training set
 
     Returns
     -------
-    sampler : nd.array
-      balanced dataset"""
-    # defining weights for the classes
+    sampler : torch.utils.data.sampler.WeightedRandomSampler
+      A sampler that oversample roads to deal with the imbalanced training dataset
+
+    """
+    # defining weights for the classes ('road' and 'background')
     class_weights = compute_class_weight(
         class_weight='balanced', classes=np.unique(labels), y=labels)
     print("Dealing with imbalanced datasets")
